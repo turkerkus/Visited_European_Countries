@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+}
+
+body {
+  font-family: "Shippori Antique B1", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2rem;
+  color: white;
+  background-color: #18122b;
+}
+
+#title {
+  padding: 3vh;
+  text-align: center;
+  background-color: #443c68cc;
+}
+
+/* Center the #map element in the grid */
+#wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Center the map horizontally */
+  align-items: center; /* Center the map vertically */
+  justify-content: center;
+  height: 100vh; /* Ensure wrapper takes full viewport height */
+}
+
+#map {
+  grid-column: 2; /* Place the map in the center column */
+  justify-self: center; /* Center the map horizontally within its grid column */
+}

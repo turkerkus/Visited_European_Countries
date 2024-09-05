@@ -1,0 +1,26 @@
+version: "3.8" # Ensure that you use a version compatible with your Docker setup
+
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - EuNetwork
+
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "5000:5000"
+    networks:
+      - EuNetwork
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mydatabase
+    depends_on:
+      - mongo
+
+networks:
+  EuNetwork:
+    external: true # Make sure the network exists before running
