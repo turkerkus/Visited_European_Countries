@@ -1,4 +1,4 @@
-version: "3.8" # Ensure that you use a version compatible with your Docker setup
+version: "3.8"
 
 services:
   mongo:
@@ -23,4 +23,4 @@ services:
 
 networks:
   EuNetwork:
-    external: true # Make sure the network exists before running
+    external: true

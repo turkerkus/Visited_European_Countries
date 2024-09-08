@@ -30,3 +30,34 @@ body {
   grid-column: 2; /* Place the map in the center column */
   justify-self: center; /* Center the map horizontally within its grid column */
 }
+
+.btn {
+  background: #635985;
+  background-image: -webkit-linear-gradient(top, #635985, #443c68);
+  background-image: -moz-linear-gradient(top, #635985, #443c68);
+  background-image: -ms-linear-gradient(top, #635985, #443c68);
+  background-image: -o-linear-gradient(top, #635985, #443c68);
+  background-image: linear-gradient(to bottom, #635985, #443c68);
+  -webkit-border-radius: 48;
+  -moz-border-radius: 48;
+  border-radius: 48px;
+  text-shadow: 2px 1px 2px #666666;
+  -webkit-box-shadow: 0px 1px 3px #666666;
+  -moz-box-shadow: 0px 1px 3px #666666;
+  box-shadow: 0px 1px 3px #666666;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  border: solid #6666 2px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #635985;
+  background-image: -webkit-linear-gradient(top, #635985, #8a7eba);
+  background-image: -moz-linear-gradient(top, #635985, #8a7eba);
+  background-image: -ms-linear-gradient(top, #635985, #8a7eba);
+  background-image: -o-linear-gradient(top, #635985, #8a7eba);
+  background-image: linear-gradient(to bottom, #635985, #8a7eba);
+  text-decoration: none;
+}

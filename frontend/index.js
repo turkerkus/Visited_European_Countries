@@ -1,5 +1,55 @@
 let clickedCountries = [];
 
+// Fix the clear button event listener
+const clearButton = document.getElementById("clearbutton");
+clearButton.addEventListener("click", async () => {
+  await clearList(); // Call the function to clear the list
+  await getCountries(); // Refresh the list of countries in the UI
+});
+
+// Modify the clearList function to call the correct backend route
+async function clearList() {
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:5000/backend/clearList", // Corrected endpoint for clearing the list
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to clear the list");
+    } else {
+      console.log("Countries cleared successfully");
+      clickedCountries = []; // Reset the clicked countries array
+      await getCountries(); // Refresh the list of countries in the UI
+      drawEuropeMap(); // Redraw the map to reset colors
+    }
+  } catch (error) {
+    console.error("POST request error:", error);
+  }
+}
+
+// Helper function for POST requests
+async function postCountry(url, country) {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ country }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to process request for ${country}`);
+    }
+  } catch (error) {
+    console.error("POST request error:", error);
+  }
+}
+
 // Function to fetch the list of countries from the backend
 async function getCountries() {
   try {
@@ -84,39 +134,35 @@ function mapSvg(
       .style("stroke", "#fff")
       .style("stroke-width", 0.6)
       .on("click", async function (event, d) {
-        if (clickedCountries.includes(d.name)) {
-          // If the country is already clicked, remove it from the array and reset the color
-          clickedCountries = clickedCountries.filter((name) => name !== d.name);
-          d3.select(this).style("fill", d.fill);
+        try {
+          if (clickedCountries.includes(d.name)) {
+            // If the country is already clicked, remove it from the array and reset the color
+            clickedCountries = clickedCountries.filter(
+              (name) => name !== d.name
+            );
+            d3.select(this).style("fill", d.fill);
 
-          // Send POST request to remove the country
-          await fetch("http://127.0.0.1:5000/backend/removeCountry", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ country: d.name }),
-          });
+            // Send POST request to remove the country
+            await postCountry(
+              "http://127.0.0.1:5000/backend/removeCountry",
+              d.name
+            );
+          } else {
+            // If the country is not clicked, add it to the array and darken the color
+            clickedCountries.push(d.name);
+            d3.select(this).style("fill", d3.color(d.fill).darker(1));
 
-          console.log(clickedCountries);
-        } else {
-          // If the country is not clicked, add it to the array and darken the color
-          clickedCountries.push(d.name);
-          d3.select(this).style("fill", d3.color(d.fill).darker(1));
-
-          // Send POST request to add the country
-          await fetch("http://127.0.0.1:5000/backend/addCountry", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ country: d.name }),
-          });
-
-          console.log(clickedCountries);
+            // Send POST request to add the country
+            await postCountry(
+              "http://127.0.0.1:5000/backend/addCountry",
+              d.name
+            );
+          }
+          // Update the list of clicked countries
+          await getCountries();
+        } catch (error) {
+          console.error("Error handling map click:", error);
         }
-        // Update the list of clicked countries
-        await getCountries();
       })
       .style("cursor", "pointer"); // Optional: change cursor to pointer on hover
   };
@@ -151,6 +197,10 @@ async function drawEuropeMap() {
   const scaleFactor = scaleEurope;
   const d3projection = d3projections[d3projEurope];
 
+  // Ensure the map container is empty before drawing
+  const mapElement = document.getElementById("map");
+  mapElement.innerHTML = ""; // Clear any existing content
+
   const mapCanvas = mapSvg(
     d3projection,
     europe,
@@ -164,7 +214,7 @@ async function drawEuropeMap() {
   );
 
   // Append the map to the DOM
-  document.getElementById("map").appendChild(mapCanvas);
+  mapElement.appendChild(mapCanvas);
 }
 
 // Call the function to draw the map
